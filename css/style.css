@@ -14,9 +14,8 @@ html, body {
     grid-template-columns: 20% 80%;
     grid-template-rows: auto 100%;
     grid-gap: 1rem;
-    margin: auto;
-    height: calc(85vh);
     margin: 0 auto;
+    height: calc(85vh);
     padding-left: 4%;
     justify-content: center;
 }
