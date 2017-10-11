@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title></title>
@@ -17,23 +18,22 @@
 
     <div class="grid">
 
-        <header>
-            <h1>HEAD</h1>
-        </header>
-
         <!-- Search UI -->
         <aside>
-            <p>First name:
-                <input data-bind="text: firstName"></input>
-            </p>
+            <header class="brand">
+                <h1>HEAD</h1>
+            </header>
+            
+            <input class="filter" data-bind="value: currentFilter, valueUpdate: 'afterkeydown'" />
+            <ul class = "main-list" data-bind="foreach: filteredItems">
+              <li class = "list-item list-group-item" data-bind="text: title, click: $parent.toggleMap"></li>
+            </ul>
 
-            <table>
-                <tbody data-bind="foreach: locations">
-                    <tr>
-                        <td data-bind="text: title"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <ul data-bind="foreach:locations">
+                <li>
+                    <strong data-bind="text: title"></strong> –
+                </li>
+            </ul>
 
         </aside>
         <!-- Google Map -->

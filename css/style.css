@@ -13,10 +13,10 @@ html, body {
     "sidebar main ";
     grid-template-columns: 20% 80%;
     grid-template-rows: auto 100%;
-    grid-gap: 1rem;
+    /* grid-gap: 1rem; */
     margin: 0 auto;
-    height: calc(85vh);
-    padding-left: 4%;
+    height: 100%;
+    padding-left: 1%;
     justify-content: center;
 }
 
@@ -33,5 +33,25 @@ main {
 aside {
     grid-area: sidebar;
     height: 100%;
+    overflow: auto;
+    font-family: verdana;
+    font-size: 12px;
+    font-weight: 200;
+    background-color: #2e353d;
+    position: fixed;
+    top: 0px;
+    /* width: 300px; */
+    height: 100%;
+    color: #e1ffff;
+}
+aside input {
+    color: #23282e;
 }
 
+.brand {
+    background-color: #23282e;
+    line-height: 50px;
+    display: block;
+    text-align: center;
+    font-size: 14px;
+  }
