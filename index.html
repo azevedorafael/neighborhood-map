@@ -7,8 +7,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
 
@@ -23,20 +23,37 @@
             <header class="brand">
                 <h1>HEAD</h1>
             </header>
-            
-            <input class="filter" data-bind="value: currentFilter, valueUpdate: 'afterkeydown'" />
-            <ul class = "main-list" data-bind="foreach: filteredItems">
-              <li class = "list-item list-group-item" data-bind="text: title, click: $parent.toggleMap"></li>
-            </ul>
 
-            <ul data-bind="foreach:locations">
-                <li>
-                    <strong data-bind="text: title"></strong> –
-                </li>
-            </ul>
+            <h3>1- JSON string from server</h3>
+            <p data-bind="text: JSONdataFromServer"></p>
+
+            <h3>2- Converted to an object with ko.parseJson</h3>
+            <p data-bind="text: ko.toJSON(JSONdataFromServer)"></p>
+
+            <h3>3- Mapped to use observables and add a dependentObservable</h3>
+            <p data-bind="text: ko.toJSON(mappedData)"></p>
+
+            <hr />
+            <h3>4- Display in an editor</h3>
+
+            <ul data-bind="template: { name: 'itemsTmpl', foreach: filteredItems }"></ul>
+            <script id="itemsTmpl" type="text/html">
+                    <li data-bind="text: title" ></li>(<span data-bind="text: lat"></span>,<span data-bind="text: lng"></span>)
+                </script>
+                    <li>
+                        <a href="#" data-bind="click: addItem">Add Item</a>
+                    </li>
+
+            <h3>5- Filter display by name</h3>
+            <p>Filter:
+                <input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+            </p>
+
+            <h3>10- Convert items to JSON</h3>
+            <p data-bind="text: ko.toJSON(items)"></p>
 
         </aside>
-        <!-- Google Map -->
+        <!-- Google Map-->
         <main id="map"></main>
 
     </div>

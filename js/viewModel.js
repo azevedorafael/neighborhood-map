@@ -66,41 +66,83 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 // This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
-function AppViewModel() {
-    this.firstName = ko.observable("Bert");
 
-    var locations = { locations: ko.observableArray([]) };
 
-    this.locations = [
-        { title: 'Park Ave Penthouse', location: { lat: 40.7713024, lng: -73.9632393 } },
-        { title: 'Chelsea Loft', location: { lat: 40.7444883, lng: -73.9949465 } },
-        { title: 'Union Square Open Floor Plan', location: { lat: 40.7347062, lng: -73.9895759 } },
-        { title: 'East Village Hip Studio', location: { lat: 40.7281777, lng: -73.984377 } },
-        { title: 'TriBeCa Artsy Bachelor Pad', location: { lat: 40.7195264, lng: -74.0089934 } },
-        { title: 'Chinatown Homey Space', location: { lat: 40.7180628, lng: -73.9961237 } }
-    ];
- 
-    this.currentFilter = ko.observable();
-    // creates the filter at the top of the page.
-    this.filteredItems = ko.computed(function() {
-        if (!this.currentFilter) {
-            // this.locations.forEach(function(location) {
-            //     location.marker.setMap(map);
-            // });
-            return this.locations;
-        } else {
-            return ko.utils.arrayFilter(self.locations(), function(location) {
-                if (stringStartsWith(location.title().toLowerCase(), self.currentFilter())) {
-                    location.marker.setMap(map);
-                } else {
-                    location.marker.setMap(null);
-                }
-                return stringStartsWith(location.title().toLowerCase(), self.currentFilter());
-            });
-        }
-});
+function Item(title, lat, lng) {
+    this.title = ko.observable(title);
+    this.lat = ko.observable(lat);
+    this.lng = ko.observable(lng);
 };
 
-//Activates knockout.js
-ko.applyBindings(new AppViewModel());
+var viewModel = {
+    items: ko.observableArray([]),
+    filter: ko.observable(""),
+    search: ko.observable(""),
+    addItem: function () {
+        this.items.push(new Item(title, lat ,lng));
+    },
+    removeItem: function (item) {
+        this.items.remove(item);
+    }
+};
 
+//startsWith method
+var stringStartsWith = function (string, startsWith) {          
+    string = string || "";
+    if (startsWith.length > string.length)
+        return false;
+    return string.substring(0, startsWith.length) === startsWith;
+};
+
+//ko.utils.arrayFilter - filter the items using the filter text
+viewModel.filteredItems = ko.dependentObservable(function () {
+    var filter = this.filter().toLowerCase();
+    if (!filter) {
+        return this.items();
+    } else {
+        return ko.utils.arrayFilter(this.items(), function (item) {
+            return stringStartsWith(item.title().toLowerCase(), filter);
+        });
+    }
+}, viewModel);
+
+
+//ko.utils.arrayFirst - identify the first matching item by name
+viewModel.firstMatch = ko.dependentObservable(function () {
+    var search = this.search().toLowerCase();
+    if (!search) {
+        return null;
+    } else {
+        return ko.utils.arrayFirst(this.filteredItems(), function (item) {
+            return stringStartsWith(item.title().toLowerCase(), search);
+        });
+    }
+}, viewModel);
+
+
+
+var JSONdataFromServer = [
+    { title: 'Park Ave Penthouse', location: { lat: 40.7713024, lng: -73.9632393 } },
+    { title: 'Chelsea Loft', location: { lat: 40.7444883, lng: -73.9949465 } },
+    { title: 'Union Square Open Floor Plan', location: { lat: 40.7347062, lng: -73.9895759 } },
+    { title: 'East Village Hip Studio', location: { lat: 40.7281777, lng: -73.984377 } },
+    { title: 'TriBeCa Artsy Bachelor Pad', location: { lat: 40.7195264, lng: -74.0089934 } },
+    { title: 'Chinatown Homey Space', location: { lat: 40.7180628, lng: -73.9961237 } },
+];
+
+console.log(JSONdataFromServer);
+
+//parse into an object
+// var dataFromServer = ko.utils.parseJson(JSONdataFromServer);
+
+// console.log(dataFromServer);
+
+//do some basic mapping (without mapping plugin)
+var mappedData = ko.utils.arrayMap(JSONdataFromServer, function (item) {
+    console.log(item.title, item.location.lat, item.location.lng);
+    return new Item(item.title, item.location.lat, item.location.lng);
+});
+
+viewModel.items(mappedData);
+
+ko.applyBindings(viewModel);
