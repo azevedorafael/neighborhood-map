@@ -24,33 +24,19 @@
                 <h1>HEAD</h1>
             </header>
 
-            <h3>1- JSON string from server</h3>
-            <p data-bind="text: JSONdataFromServer"></p>
-
-            <h3>2- Converted to an object with ko.parseJson</h3>
-            <p data-bind="text: ko.toJSON(JSONdataFromServer)"></p>
-
-            <h3>3- Mapped to use observables and add a dependentObservable</h3>
-            <p data-bind="text: ko.toJSON(mappedData)"></p>
-
-            <hr />
-            <h3>4- Display in an editor</h3>
-
-            <ul data-bind="template: { name: 'itemsTmpl', foreach: filteredItems }"></ul>
-            <script id="itemsTmpl" type="text/html">
-                    <li data-bind="text: title" ></li>(<span data-bind="text: lat"></span>,<span data-bind="text: lng"></span>)
-                </script>
-                    <li>
-                        <a href="#" data-bind="click: addItem">Add Item</a>
-                    </li>
-
-            <h3>5- Filter display by name</h3>
             <p>Filter:
                 <input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
             </p>
 
-            <h3>10- Convert items to JSON</h3>
-            <p data-bind="text: ko.toJSON(items)"></p>
+            <ul data-bind="template: { name: 'itemsTmpl', foreach: filteredItems }"></ul>
+            <script id="itemsTmpl" type="text/html">
+                <li data-bind="text: title"></li>(
+                <span data-bind="text: lat"></span>,
+                <span data-bind="text: lng"></span>)
+            </script>
+            <li>
+                <a href="#" data-bind="click: addItem">Add Item</a>
+            </li>
 
         </aside>
         <!-- Google Map-->

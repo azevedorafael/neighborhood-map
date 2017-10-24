@@ -3,11 +3,13 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
+var i = 0;
+
 function initMap() {
     // Constructor creates a new map - only center and zoom are required.
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 40.7413549, lng: -73.9980244 },
-        zoom: 13
+        zoom: 15
     });
 
     // These are the real estate listings that will be shown to the user.
@@ -47,7 +49,10 @@ function initMap() {
     }
     // Extend the boundaries of the map for each marker
     map.fitBounds(bounds);
+    
+ko.applyBindings(viewModel);
 }
+
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
@@ -76,6 +81,7 @@ function Item(title, lat, lng) {
 
 var viewModel = {
     items: ko.observableArray([]),
+    itemsFiltered: ko.observableArray([]),
     filter: ko.observable(""),
     search: ko.observable(""),
     addItem: function () {
@@ -94,27 +100,19 @@ var stringStartsWith = function (string, startsWith) {
     return string.substring(0, startsWith.length) === startsWith;
 };
 
+var itensFiltered = ko.observableArray([]);
+
 //ko.utils.arrayFilter - filter the items using the filter text
-viewModel.filteredItems = ko.dependentObservable(function () {
+this.filteredItems = ko.computed(function () {
     var filter = this.filter().toLowerCase();
     if (!filter) {
         return this.items();
     } else {
         return ko.utils.arrayFilter(this.items(), function (item) {
-            return stringStartsWith(item.title().toLowerCase(), filter);
-        });
-    }
-}, viewModel);
-
-
-//ko.utils.arrayFirst - identify the first matching item by name
-viewModel.firstMatch = ko.dependentObservable(function () {
-    var search = this.search().toLowerCase();
-    if (!search) {
-        return null;
-    } else {
-        return ko.utils.arrayFirst(this.filteredItems(), function (item) {
-            return stringStartsWith(item.title().toLowerCase(), search);
+            if (stringStartsWith(item.title().toLowerCase(), filter)){
+                console.log(item.title(), item.lat(), item.lng());
+                return stringStartsWith(item.title().toLowerCase(), filter);
+            }
         });
     }
 }, viewModel);
@@ -130,7 +128,7 @@ var JSONdataFromServer = [
     { title: 'Chinatown Homey Space', location: { lat: 40.7180628, lng: -73.9961237 } },
 ];
 
-console.log(JSONdataFromServer);
+// console.log(JSONdataFromServer);
 
 //parse into an object
 // var dataFromServer = ko.utils.parseJson(JSONdataFromServer);
@@ -139,10 +137,7 @@ console.log(JSONdataFromServer);
 
 //do some basic mapping (without mapping plugin)
 var mappedData = ko.utils.arrayMap(JSONdataFromServer, function (item) {
-    console.log(item.title, item.location.lat, item.location.lng);
     return new Item(item.title, item.location.lat, item.location.lng);
 });
 
 viewModel.items(mappedData);
-
-ko.applyBindings(viewModel);
