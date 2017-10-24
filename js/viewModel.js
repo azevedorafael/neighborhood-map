@@ -37,7 +37,7 @@ function initMap() {
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
-            id: i
+            id: i,
         });
         // Push the marker to our array of markers.
         markers.push(marker);
@@ -77,6 +77,7 @@ function Item(title, lat, lng) {
     this.title = ko.observable(title);
     this.lat = ko.observable(lat);
     this.lng = ko.observable(lng);
+
 };
 
 var viewModel = {
@@ -106,16 +107,36 @@ var itensFiltered = ko.observableArray([]);
 this.filteredItems = ko.computed(function () {
     var filter = this.filter().toLowerCase();
     if (!filter) {
+        ko.utils.arrayFilter(this.items(), function (item) {
+
+            for (var i=0; i<markers.length; i++){
+                if( map.getBounds().contains(markers[i].getPosition()) ){
+                         markers[i].setMap(map);
+                }
+            }
+        });
         return this.items();
     } else {
         return ko.utils.arrayFilter(this.items(), function (item) {
             if (stringStartsWith(item.title().toLowerCase(), filter)){
                 console.log(item.title(), item.lat(), item.lng());
+
+                for (var i=0; i<markers.length; i++){
+                    if( map.getBounds().contains(markers[i].getPosition()) ){
+                        if (markers[i].title != item.title()){
+                            console.log(markers[i].title);
+                            markers[i].setMap(null);
+                        }
+
+                    }
+                };
                 return stringStartsWith(item.title().toLowerCase(), filter);
             }
         });
     }
 }, viewModel);
+
+
 
 
 
