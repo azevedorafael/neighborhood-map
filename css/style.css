@@ -13,7 +13,6 @@ html, body {
     "aside main ";
     grid-template-columns: 20% 80%;
     grid-template-rows: auto 100%;
-    /* grid-gap: 1rem; */
     margin: 0 auto;
     height: 100%;
     padding-left: 1%;
@@ -40,7 +39,6 @@ aside {
     background-color: #2e353d;
     position: fixed;
     top: 0px;
-    /* width: 300px; */
     height: 100%;
     color: #e1ffff;
 }

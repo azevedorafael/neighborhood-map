@@ -21,7 +21,7 @@
         <!-- Search UI -->
         <aside>
             <header class="brand">
-                <h1>HEAD</h1>
+                <h1>Places</h1>
             </header>
 
             <p>Filter:
@@ -30,13 +30,10 @@
 
             <ul data-bind="template: { name: 'itemsTmpl', foreach: filteredItems }"></ul>
             <script id="itemsTmpl" type="text/html">
-                <li data-bind="text: title"></li>(
+                <li data-bind="text: title, click: $parent.showInfoWindow" ></li>(
                 <span data-bind="text: lat"></span>,
                 <span data-bind="text: lng"></span>)
             </script>
-            <li>
-                <a href="#" data-bind="click: addItem">Add Item</a>
-            </li>
 
         </aside>
         <!-- Google Map-->
