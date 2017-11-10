@@ -27,13 +27,15 @@
             <p>Filter:
                 <input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
             </p>
-
             <ul data-bind="template: { name: 'itemsTmpl', foreach: filteredItems }"></ul>
             <script id="itemsTmpl" type="text/html">
-                <li data-bind="text: title, click: $parent.showInfoWindow" ></li>(
-                <span data-bind="text: lat"></span>,
-                <span data-bind="text: lng"></span>)
-            </script>
+                <a href="#">
+                    <li data-bind="text: title, click: $parent.showInfoWindow">(
+                        <span data-bind="text: lat"></span>,
+                        <span data-bind="text: lng"></span>)
+                    </li>
+                <a/>    
+                    </script>
 
         </aside>
         <!-- Google Map-->

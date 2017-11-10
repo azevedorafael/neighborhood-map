@@ -41,13 +41,20 @@ function initMap() {
             animation: google.maps.Animation.DROP,
             id: i,
         });
-        // Push the marker to our array of markers.
-        markers.push(marker);
+
+        // Add animation to the marker when clicked
+        marker.addListener('click', toggleBounce);
+        
         // Create an onclick event to open an infowindow at each marker.
         marker.addListener('click', function () {
             populateInfoWindow(this, largeInfowindow);
         });
+        
+         // Push the marker to our array of markers.
+         markers.push(marker);
+
         bounds.extend(markers[i].position);
+
     }
     // Extend the boundaries of the map for each marker
     map.fitBounds(bounds);
@@ -55,6 +62,14 @@ function initMap() {
     ko.applyBindings(viewModel);
 }
 
+//Toggle Bounce Animation when maker is clicked
+function toggleBounce() {
+    if (this.getAnimation() !== null) {
+        this.setAnimation(null);
+    } else {
+        this.setAnimation(google.maps.Animation.BOUNCE);
+    }
+};
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
@@ -105,20 +120,28 @@ var viewModel = {
         // marker.addListener('click', function () {
         //     populateInfoWindow(this, largeInfowindow);
         // });
-        console.log(this.title());
         for (var i = 0; i < markers.length; i++) {
             if (map.getBounds().contains(markers[i].getPosition())) {
                 if (markers[i].title == this.title()) {
                     var markerImage = new google.maps.MarkerImage(
-                        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ 'FFFF24' +
+                        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + 'FFFF24' +
                         '|40|_|%E2%80%A2',
                         new google.maps.Size(21, 34),
                         new google.maps.Point(0, 0),
                         new google.maps.Point(10, 34),
-                        new google.maps.Size(21,34));
+                        new google.maps.Size(21, 34));
                     markers[i].setIcon(markerImage);
-                    markers[i].setAnimation(google.maps.Animation.BOUNCE)
-                    // openInfoWindow(markers[i]);
+
+                    //Toggle Bounce
+                    if (markers[i].getAnimation() !== null) {
+                        markers[i].setAnimation(null);
+                    } else {
+                        markers[i].setAnimation(google.maps.Animation.BOUNCE);
+                        var largeInfowindow = new google.maps.InfoWindow();
+                    //Shows Info Window
+                        populateInfoWindow(markers[i], largeInfowindow);
+
+                    }
                 }
             }
         }
@@ -152,7 +175,6 @@ this.filteredItems = ko.computed(function () {
     } else {
         return ko.utils.arrayFilter(this.items(), function (item) {
             if (stringStartsWith(item.title().toLowerCase(), filter)) {
-                console.log(item.title(), item.lat(), item.lng());
 
                 for (var i = 0; i < markers.length; i++) {
                     if (map.getBounds().contains(markers[i].getPosition())) {
