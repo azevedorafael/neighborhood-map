@@ -8,11 +8,11 @@ var i = 0;
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [
-    { title: 'Park Ave Penthouse', location: { lat: 40.7713024, lng: -73.9632393 } },
-    { title: 'Union Square Open Floor Plan', location: { lat: 40.7347062, lng: -73.9895759 } },
-    { title: 'East Village Hip Studio', location: { lat: 40.7281777, lng: -73.984377 } },
-    { title: 'TriBeCa Artsy Bachelor Pad', location: { lat: 40.7195264, lng: -74.0089934 } },
-    { title: 'Chinatown Homey Space', location: { lat: 40.7180628, lng: -73.9961237 } }
+    { title: 'Charging Bull', location: { lat: 40.7055537, lng: -74.0134436 },id: "4a675deef964a52045c91fe3" },
+    { title: 'Museum at Eldridge Street', location: { lat: 40.7147484, lng: -73.9935561 },id: "4b37a3c9f964a5207e4325e3" },
+    { title: 'Times Square', location: { lat: 40.758895, lng: -73.985131 },id: "49b7ed6df964a52030531fe3" },
+    { title: 'Pier 45', location: { lat: 40.7331926, lng: -74.0116944 },id: "4a58f59ef964a5204eb81fe" },
+    { title: 'Washington Square Park', location: { lat: 40.7308228, lng: -73.997332 },id: "40abf500f964a52035f31ee3" }
 ];
 
 
@@ -33,23 +33,24 @@ function initMap() {
         // Get the position from the location array.
         var position = locations[i].location;
         var title = locations[i].title;
+        var id = locations[i].id;
         // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
             map: map,
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
-            id: i,
+            id: location.id,
         });
 
         // Add animation to the marker when clicked
         marker.addListener('click', toggleBounce);
-        
+
         // Create an onclick event to open an infowindow at each marker.
         marker.addListener('click', function () {
             populateInfoWindow(this, largeInfowindow);
         });
-        
+
          // Push the marker to our array of markers.
          markers.push(marker);
 
@@ -62,6 +63,10 @@ function initMap() {
     ko.applyBindings(viewModel);
 }
 
+function error(){
+    $("#map").innerHTML("Google Maps could not be loaded. Please try again later");
+}
+
 //Toggle Bounce Animation when maker is clicked
 function toggleBounce() {
     if (this.getAnimation() !== null) {
@@ -71,6 +76,24 @@ function toggleBounce() {
     }
 };
 
+var getFQSREdata = function (id,callback){
+    // Make AJAX request to Foursquare
+$.ajax({
+    url: 'https://api.foursquare.com/v2/venues/' + id +
+    '?client_id=WFBLQALVHSC22TA2JXBZARYZB4I2OALGLQGWHNUS312TBNLI&client_secret=04XCV5EXCNLLCUNNGRQIGX5MPZNNVTDKDFE4CEOZGK03U2DY&v=20171119',
+    dataType: "json",
+    success: function (data){
+        callback (data);
+    },
+    // Alert the user on error. Set messages in the DOM and infowindow
+    error: function (e) {
+        alert("ERRORRRRRRRRRRRRRRR");
+        // infowindow.setContent('<h5>Foursquare data is unavailable. Please try refreshing later.</h5>');
+        // document.getElementById("error").innerHTML = "<h4>Foursquare data is unavailable. Please try refreshing later.</h4>";
+    }
+});
+};
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -78,12 +101,32 @@ function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
         infowindow.marker = marker;
-        infowindow.setContent('<div>' + marker.title + '</div>');
-        infowindow.open(map, marker);
-        // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick', function () {
-            infowindow.setMarker = null;
+
+        getFQSREdata("4a675deef964a52045c91fe3",function(data){
+            if(data){
+                // Make results easier to handle
+                var result = data.response.venue;
+
+                // // Content of the infowindow
+                // var contentString = '<div id="iWindow"><h4>' + () + '</h4><div id="pic"><img src="' +
+                //     placeItem.photoPrefix() + '110x110' + placeItem.photoSuffix() +
+                //     '" alt="Image Location"></div><p>Information from Foursquare:</p><p>' +
+                //     placeItem.phone() + '</p><p>' + placeItem.address() + '</p><p>' +
+                //     placeItem.description() + '</p><p>Rating: ' + placeItem.rating() +
+                //     '</p><p><a href=' + placeItem.url() + '>' + placeItem.url() +
+                //     '</a></p><p><a target="_blank" href=' + placeItem.canonicalUrl() +
+                //     '>Foursquare Page</a></p><p><a target="_blank" href=https://www.google.com/maps/dir/Current+Location/' +
+                //     placeItem.lat() + ',' + placeItem.lng() + '>Directions</a></p></div>';
+
+                infowindow.setContent('<div>' + marker.title + "<br/> "+ result.description +'</div>');
+                infowindow.open(map, marker);
+                // Make sure the marker property is cleared if the infowindow is closed.
+                infowindow.addListener('closeclick', function () {
+                    infowindow.setMarker = null;
+                });
+            }
         });
+
     }
 }
 

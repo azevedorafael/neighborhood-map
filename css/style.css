@@ -9,10 +9,9 @@ html, body {
 .grid {
     display: grid;
     grid-template-areas: 
-    "header header"
     "aside main ";
-    grid-template-columns: 30% 85%;
-    grid-template-rows: auto 100%;
+    grid-template-columns: 20% 80%;
+    grid-template-rows: 100%;
     margin: 0 auto;
     height: 100%;
     padding-left: 1%;
@@ -20,17 +19,17 @@ html, body {
 }
 
 header {
-    grid-area: header;
     text-align: center;
-    max-height: 20%;
 }
 
 main {
     grid-area: main;
+    width:100%;
 }
 
 aside {
     grid-area: aside;
+    width:100%;
     padding: 5px;
     height: 100%;
     overflow: auto;
@@ -40,7 +39,6 @@ aside {
     background-color: #2e353d;
     position: fixed;
     top: 0px;
-    height: 100%;
     color: #e1ffff;
 }
 aside input {
@@ -57,6 +55,7 @@ aside input {
 
   ul{
       list-style-type: none;
+      padding-left: 0px;
   }
 
   li{
