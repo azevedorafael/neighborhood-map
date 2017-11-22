@@ -11,7 +11,7 @@ var locations = [
     { title: 'Charging Bull', location: { lat: 40.7055537, lng: -74.0134436 },id: "4a675deef964a52045c91fe3" },
     { title: 'Museum at Eldridge Street', location: { lat: 40.7147484, lng: -73.9935561 },id: "4b37a3c9f964a5207e4325e3" },
     { title: 'Times Square', location: { lat: 40.758895, lng: -73.985131 },id: "49b7ed6df964a52030531fe3" },
-    { title: 'Pier 45', location: { lat: 40.7331926, lng: -74.0116944 },id: "4a58f59ef964a5204eb81fe" },
+    { title: 'Pier 45', location: { lat: 40.7331926, lng: -74.0116944 },id: "4a58f59ef964a5204eb81fe3" },
     { title: 'Washington Square Park', location: { lat: 40.7308228, lng: -73.997332 },id: "40abf500f964a52035f31ee3" }
 ];
 
@@ -40,7 +40,7 @@ function initMap() {
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
-            id: location.id,
+            id: id,
         });
 
         // Add animation to the marker when clicked
@@ -64,7 +64,7 @@ function initMap() {
 }
 
 function error(){
-    $("#map").innerHTML("Google Maps could not be loaded. Please try again later");
+    alert("Google Maps could not be loaded. Please try again later");
 }
 
 //Toggle Bounce Animation when maker is clicked
@@ -87,9 +87,8 @@ $.ajax({
     },
     // Alert the user on error. Set messages in the DOM and infowindow
     error: function (e) {
-        alert("ERRORRRRRRRRRRRRRRR");
-        // infowindow.setContent('<h5>Foursquare data is unavailable. Please try refreshing later.</h5>');
-        // document.getElementById("error").innerHTML = "<h4>Foursquare data is unavailable. Please try refreshing later.</h4>";
+        alert("Error in the Foursquare request.Please try refreshing later!");
+
     }
 });
 };
@@ -102,23 +101,19 @@ function populateInfoWindow(marker, infowindow) {
     if (infowindow.marker != marker) {
         infowindow.marker = marker;
 
-        getFQSREdata("4a675deef964a52045c91fe3",function(data){
+        getFQSREdata(marker.id,function(data){
             if(data){
                 // Make results easier to handle
                 var result = data.response.venue;
 
-                // // Content of the infowindow
-                // var contentString = '<div id="iWindow"><h4>' + () + '</h4><div id="pic"><img src="' +
-                //     placeItem.photoPrefix() + '110x110' + placeItem.photoSuffix() +
-                //     '" alt="Image Location"></div><p>Information from Foursquare:</p><p>' +
-                //     placeItem.phone() + '</p><p>' + placeItem.address() + '</p><p>' +
-                //     placeItem.description() + '</p><p>Rating: ' + placeItem.rating() +
-                //     '</p><p><a href=' + placeItem.url() + '>' + placeItem.url() +
-                //     '</a></p><p><a target="_blank" href=' + placeItem.canonicalUrl() +
-                //     '>Foursquare Page</a></p><p><a target="_blank" href=https://www.google.com/maps/dir/Current+Location/' +
-                //     placeItem.lat() + ',' + placeItem.lng() + '>Directions</a></p></div>';
-
-                infowindow.setContent('<div>' + marker.title + "<br/> "+ result.description +'</div>');
+                infowindow.setContent(  '<div><h5>' + marker.title +' 📍</h5></div>'+
+                                        '<div>Address: ' + result.location.formattedAddress +'</div>'+
+                                        '<div>Checkins Count: ' + result.stats.checkinsCount +'</div>'+
+                                        '<div>Users Count: ' + result.stats.usersCount +'</div>'+
+                                        '<div>Visits: ' + result.stats.visitsCount +'</div>'+
+                                        '<div>Rating: ' + result.rating +' ⭐</div></br>'+
+                                        '<div> Provided by Foursquare</div>'
+                );
                 infowindow.open(map, marker);
                 // Make sure the marker property is cleared if the infowindow is closed.
                 infowindow.addListener('closeclick', function () {
